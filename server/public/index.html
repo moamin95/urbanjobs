@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+    <title>Urban Jobs</title>
+</head>
+<body>
+    <h1>Urban Jobs</h1>
+    <button id="jobs-button">Fetch Jobs</button>
+    <pre id="output"></pre>
+</body>
+<script>
+    document.getElementById("jobs-button").addEventListener("click", async () => {
+        const output = document.getElementById("output");
+        output.textContent = "Loading..."
+        try {
+            // Use current origin if served through Express, otherwise use localhost:8080
+            const baseUrl = window.location.origin === 'file://' || window.location.origin === 'null' 
+                ? 'http://localhost:8080' 
+                : window.location.origin;
+            const res = await fetch(`${baseUrl}/jobs`)
+            const json = await res.json();
+            
+            output.textContent = JSON.stringify(json, null, 2);
+
+        } catch (error) {
+            console.error(error);
+            output.textContent = `Error while fetching ${error}`
+        }
+    })
+</script>
+</html>
