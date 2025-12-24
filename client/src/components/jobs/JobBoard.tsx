@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Search, Filter, MapPin, Briefcase, Clock, ChevronLeft, ChevronRight, DollarSign, Calendar, Building2, Users, Tag, X, ArrowRight } from 'lucide-react';
 import type { Job } from '../../../../shared/types/job';
 import { useJobsQuery } from '@/hooks/useJobsQuery';
@@ -32,8 +32,9 @@ export const JobBoard = () => {
 
     const { data: agencies } = useAgencies();
 
-    useEffect(() => {
 
+    useEffect(() => {
+        if (pageNumber === 1) return;
         if (headerRef.current !== null) {
             headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -55,9 +56,6 @@ export const JobBoard = () => {
         },
         agencies: selectedAgencies
     });
-
-    console.log('jobs', jobs)
-
 
     const totalPages = Math.ceil(totalCount / pageSize)
 

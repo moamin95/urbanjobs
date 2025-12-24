@@ -1,6 +1,6 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import type { Job } from '../../shared/types/job.js';
+import type { Job } from '../type.js';
 
 const router = express.Router();
 

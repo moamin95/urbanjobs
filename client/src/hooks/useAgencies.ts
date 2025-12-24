@@ -9,13 +9,8 @@ export interface Agencies {
 }
 
 export const useAgencies = (): Agencies => {
-    console.log('useAgencies hook called');
-
     const queryKey = ['agencies'];
     const queryFn = async () => {
-
-        console.log('queryFn executing - fetching agencies');
-
         const res = await fetch('agencies');
 
         if (!res.ok) {
@@ -23,8 +18,6 @@ export const useAgencies = (): Agencies => {
         }
 
         const json = await res.json();
-
-        console.log('json', json);
 
         return json;
     }
