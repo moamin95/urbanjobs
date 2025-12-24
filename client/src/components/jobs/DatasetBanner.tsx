@@ -91,12 +91,12 @@ export const DatasetBanner = ({count}: DatasetBannerProps) => {
                 </div>
 
                 {/* Additional Info */}
-                <div className="flex flex-wrap items-center gap-4 pt-2 border-t border-neutral-200/50">
+                <div className="grid grid-cols-1 md:grid-auto-columns-max md:grid-flow-col md:justify-start gap-3 pt-2 border-t border-neutral-200/50">
                     <div className="flex items-center gap-2 text-xs text-neutral-600 google-sans-flex">
                         <span className="font-medium text-neutral-500">Created:</span>
                         <span>April 18, 2013</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-neutral-600 google-sans-flex">
+                    <div className="flex items-start gap-2 text-xs text-neutral-600 google-sans-flex">
                         <span className="font-medium text-neutral-500">Attribution:</span>
                         <span>Department of Citywide Administrative Services (DCAS)</span>
                     </div>
