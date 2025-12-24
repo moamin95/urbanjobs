@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Filter, MapPin, Briefcase, Clock, ChevronLeft, ChevronRight, DollarSign, Calendar, Building2, Users, FileText, X } from 'lucide-react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { Search, Filter, MapPin, Briefcase, Clock, ChevronLeft, ChevronRight, DollarSign, Calendar, Building2, Users, Tag, X, ArrowRight } from 'lucide-react';
 import type { Job } from '../../../../shared/types/job';
 import { useJobsQuery } from '@/hooks/useJobsQuery';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -10,18 +10,41 @@ import {
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet";
+import { DatasetBanner } from './DatasetBanner';
+import { useAgencies } from '@/hooks/useAgencies';
+import { MultiSelect } from '@/components/ui/MultiSelect';
 
 export const JobBoard = () => {
+
+    const headerRef = useRef<HTMLDivElement>(null);
+
     const [pageNumber, setPageNumber] = useState(1);
     const [jobSearch, setJobSearch] = useState('');
     const [keyWordsSearch, setKeyWordsSearch] = useState('');
+    const [selectedAgencies, setSelectedAgencies] = useState<string[]>([]);
     const [selectedJob, setSelectedJob] = useState<Job | null>(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const lastFocusedElementRef = React.useRef<HTMLDivElement | null>(null);
     const pageSize = 12;
 
-    const debouncedJobSearch = useDebounce({delay: 500, query: jobSearch});
-    const debouncedKeyWords = useDebounce({delay: 500, query: keyWordsSearch});
+    const debouncedJobSearch = useDebounce({ delay: 500, query: jobSearch });
+    const debouncedKeyWords = useDebounce({ delay: 500, query: keyWordsSearch });
+
+    const { data: agencies } = useAgencies();
+
+    useEffect(() => {
+
+        if (headerRef.current !== null) {
+            headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        return;
+
+    }, [pageNumber])
+
+    useEffect(() => {
+        setPageNumber(1);
+    }, [debouncedJobSearch.debouncedQuery, debouncedKeyWords.debouncedQuery, selectedAgencies]);
 
     const { data: jobs, totalCount, isLoading } = useJobsQuery({
         pageNumber,
@@ -30,13 +53,13 @@ export const JobBoard = () => {
             job: debouncedJobSearch.debouncedQuery,
             keyWords: debouncedKeyWords.debouncedQuery
         },
+        agencies: selectedAgencies
     });
 
     console.log('jobs', jobs)
 
 
-    const totalPages = Math.ceil(totalCount/pageSize)
-    const displayCount = totalCount
+    const totalPages = Math.ceil(totalCount / pageSize)
 
     const formatSalary = (from: string, to: string, frequency: string) => {
         const formatNumber = (num: string) => {
@@ -59,25 +82,12 @@ export const JobBoard = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-slate-50/50">
-            <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
-                {/* Header Section */}
-                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-12 space-y-6 lg:space-y-0">
-                    <div className='flex flex-col space-y-3'>
-                        <h1 className="text-2xl lg:text-4xl font-light text-neutral-900 playfair-display tracking-tight">
-                            Urban Jobs <span className="text-neutral-400">|</span> NYC
-                        </h1>
-                        <p className="text-sm lg:text-base text-neutral-500 google-sans-flex flex items-center gap-2">
-                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                            Exploring <span className="font-semibold text-neutral-700">{displayCount.toLocaleString()}</span> open positions
-                        </p>
-                    </div>
-                    <p className="text-base lg:text-xl text-neutral-600 google-sans-flex font-medium tracking-wide">
-                        Job Postings in NYC
-                    </p>
-                </div>
+            <div ref={headerRef} className="max-w-7xl mx-auto px-6 pt-8 pb-12 lg:pt-12 lg:pb-16">
+                {/* Dataset Banner */}
+                <DatasetBanner count={totalCount} />
 
                 {/* Search Controls */}
-                <div className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-5 h-5" />
                         <input
@@ -85,7 +95,7 @@ export const JobBoard = () => {
                             placeholder="Search job titles..."
                             value={jobSearch}
                             onChange={(e) => setJobSearch(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-300 focus:border-transparent transition-all google-sans-flex"
+                            className="w-full pl-12 pr-4 py-3.5 bg-white border border-neutral-500 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-300 focus:border-transparent transition-all google-sans-flex"
                         />
                     </div>
                     <div className="relative">
@@ -95,12 +105,45 @@ export const JobBoard = () => {
                             placeholder="Search key words..."
                             value={keyWordsSearch}
                             onChange={(e) => setKeyWordsSearch(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-300 focus:border-transparent transition-all google-sans-flex"
+                            className="w-full pl-12 pr-4 py-3.5 bg-white border border-neutral-500 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-300 focus:border-transparent transition-all google-sans-flex"
                         />
                     </div>
+                    <MultiSelect
+                        options={agencies.map(agency => agency.agency)}
+                        selected={selectedAgencies}
+                        onChange={setSelectedAgencies}
+                        placeholder="Select agencies..."
+                        icon={<Briefcase className="w-5 h-5" />}
+                    />
                 </div>
 
-                {/* Job Grid */}
+                {/* Selected Agencies Badges */}
+                {selectedAgencies.length > 0 && (
+                    <div className="mb-10 flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-medium text-neutral-600 google-sans-flex">
+                            Filtering by:
+                        </span>
+                        {selectedAgencies.map((agency) => (
+                            <button
+                                key={agency}
+                                onClick={() => setSelectedAgencies(selectedAgencies.filter(a => a !== agency))}
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 text-blue-900 rounded-xl text-sm font-medium google-sans-flex hover:border-blue-300/60 hover:shadow-sm transition-all group"
+                            >
+                                <Briefcase className="w-3.5 h-3.5 text-blue-600" />
+                                {agency}
+                                <X className="w-3.5 h-3.5 text-blue-600 group-hover:text-blue-800 transition-colors" />
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => setSelectedAgencies([])}
+                            className="text-xs text-neutral-500 hover:text-neutral-700 underline google-sans-flex transition-colors"
+                        >
+                            Clear all
+                        </button>
+                    </div>
+                )}
+
+                {/* Job List */}
                 {isLoading ? (
                     <div className="flex items-center justify-center py-20">
                         <div className="text-neutral-400 google-sans-flex">Loading positions...</div>
@@ -110,10 +153,10 @@ export const JobBoard = () => {
                         <div className="text-neutral-400 google-sans-flex">No positions found</div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <div className="space-y-5 mb-12">
                         {jobs.slice(0, pageSize).map((job) => (
                             <div
-                                key={job.job_id}
+                                key={job[":id"]}
                                 tabIndex={0}
                                 onClick={(e) => {
                                     lastFocusedElementRef.current = e.currentTarget;
@@ -128,45 +171,109 @@ export const JobBoard = () => {
                                         setIsSheetOpen(true);
                                     }
                                 }}
-                                className="group bg-white border border-neutral-200/80 rounded-2xl p-6 hover:shadow-xl hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:border-neutral-400 transition-all duration-300 flex flex-col justify-between cursor-pointer"
+                                className="group bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 transition-all duration-300 cursor-pointer"
                             >
-                                <div className="space-y-4">
-                                    {/* Job Title */}
-                                    <h3 className="text-xl font-semibold text-neutral-900 google-sans-flex leading-tight group-hover:text-neutral-700 transition-colors line-clamp-2">
-                                        {job.business_title}
-                                    </h3>
-
-                                    {/* Agency */}
-                                    <div className="flex items-center gap-2 text-neutral-600">
-                                        <Briefcase className="w-4 h-4 flex-shrink-0" />
-                                        <span className="text-sm google-sans-flex truncate">{job.agency}</span>
+                                <div className="space-y-5">
+                                    {/* Header: Title and Job ID */}
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-1">
+                                            <h3 className="text-xl font-semibold text-neutral-900 google-sans-flex leading-tight group-hover:text-blue-900 transition-colors mb-2">
+                                                {job.business_title}
+                                            </h3>
+                                            {job.civil_service_title && (
+                                                <p className="text-sm text-neutral-600 google-sans-flex">
+                                                    {job.civil_service_title}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 border border-blue-200 rounded-full flex-shrink-0">
+                                            <span className="text-xs font-medium text-blue-800 google-sans-flex">
+                                                ID: {job.job_id}
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    {/* Location */}
-                                    {job.work_location && (
-                                        <div className="flex items-center gap-2 text-neutral-600">
-                                            <MapPin className="w-4 h-4 flex-shrink-0" />
-                                            <span className="text-sm google-sans-flex truncate">{job.work_location}</span>
+                                    {/* Main Info Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                                        {/* Agency */}
+                                        <div className="bg-white/60 border border-neutral-200/50 rounded-lg p-3">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Briefcase className="w-3.5 h-3.5 text-neutral-500" />
+                                                <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider">Agency</p>
+                                            </div>
+                                            <p className="text-sm text-neutral-900 google-sans-flex font-semibold truncate">
+                                                {job.agency}
+                                            </p>
                                         </div>
-                                    )}
 
-                                    {/* Salary */}
-                                    <div className="flex items-center gap-2 text-neutral-700">
-                                        <DollarSign className="w-4 h-4 flex-shrink-0" />
-                                        <span className="text-sm font-medium google-sans-flex">
+                                        {/* Location */}
+                                        <div className="bg-white/60 border border-neutral-200/50 rounded-lg p-3">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <MapPin className="w-3.5 h-3.5 text-neutral-500" />
+                                                <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider">Location</p>
+                                            </div>
+                                            <p className="text-sm text-neutral-900 google-sans-flex font-semibold truncate">
+                                                {job.work_location || 'Not specified'}
+                                            </p>
+                                        </div>
+
+                                        {/* Career Level */}
+                                        <div className="bg-white/60 border border-neutral-200/50 rounded-lg p-3">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Users className="w-3.5 h-3.5 text-neutral-500" />
+                                                <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider">Level</p>
+                                            </div>
+                                            <p className="text-sm text-neutral-900 google-sans-flex font-semibold">
+                                                {job.career_level || 'Unspecified'}
+                                            </p>
+                                        </div>
+
+                                        {/* Posting Date */}
+                                        <div className="bg-white/60 border border-neutral-200/50 rounded-lg p-3">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Clock className="w-3.5 h-3.5 text-neutral-500" />
+                                                <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider">Posted</p>
+                                            </div>
+                                            <p className="text-sm text-neutral-900 google-sans-flex font-semibold">
+                                                {formatDate(job.posting_date)}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Salary Section */}
+                                    <div className="bg-white/70 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <DollarSign className="w-4 h-4 text-neutral-500" />
+                                            <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider">Salary Range</p>
+                                        </div>
+                                        <p className="text-lg text-neutral-900 google-sans-flex font-bold">
                                             {formatSalary(job.salary_range_from, job.salary_range_to, job.salary_frequency)}
-                                        </span>
+                                        </p>
                                     </div>
 
-                                    {/* Job Type & Posting Date */}
-                                    <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
-                                        <span className="text-xs px-3 py-1.5 bg-neutral-100 text-neutral-700 rounded-full google-sans-flex font-medium">
-                                            {job.career_level || 'Unspecified Level'}
-                                        </span>
-                                        <div className="flex items-center gap-1 text-neutral-500">
-                                            <Clock className="w-3.5 h-3.5" />
-                                            <span className="text-xs google-sans-flex">{formatDate(job.posting_date)}</span>
-                                        </div>
+                                    {/* Footer: Job Category Badge and Apply Button */}
+                                    <div className="flex items-center justify-between pt-4 border-t border-blue-200/30">
+                                        {/* Job Category Badge */}
+                                        {job.job_category ? (
+                                            <div className="flex items-center gap-2">
+                                                <Tag className="w-3.5 h-3.5 text-neutral-500" />
+                                                <span className="text-xs px-3 py-1 bg-white/60 border border-neutral-200/50 text-neutral-700 rounded-lg google-sans-flex font-medium">
+                                                    {job.job_category}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div></div>
+                                        )}
+
+                                        {/* Apply Button */}
+                                        <a
+                                            onClick={(e) => { e.stopPropagation() }}
+                                            href={`https://cityjobs.nyc.gov/jobs?q=${job.job_id}&options=&page=1`}
+                                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold google-sans-flex shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        >
+                                            Apply Now
+                                            <ArrowRight className="w-4 h-4" />
+                                        </a>
                                     </div>
                                 </div>
                             </div>

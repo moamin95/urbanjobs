@@ -12,14 +12,32 @@ router.get('/', async (req: Request, res: Response) => {
 
     const {pageNumber = '1', pageSize = '12', job = "", keyWords = "" } = req.query;
 
+    // Normalize agencies to always be an array
+    let agenciesArray: string[] = [];
+    if (req.query.agencies) {
+        agenciesArray = Array.isArray(req.query.agencies)
+            ? req.query.agencies as string[]
+            : [req.query.agencies as string];
+    }
+
     const conditions = [];
+
     if (job) {
         const escapedJob = String(job).replace(/'/g, "''");
         conditions.push(`business_title LIKE '%${escapedJob}%'`);
     }
+
     if (keyWords) {
         const escapedKeyWords = String(keyWords).replace(/'/g, "''");
         conditions.push(`job_category LIKE '%${escapedKeyWords}%'`);
+    }
+
+    // Add agencies filter if any are selected
+    if (agenciesArray.length > 0) {
+        const escapedAgencies = agenciesArray.map(agency =>
+            `'${String(agency).replace(/'/g, "''")}'`
+        ).join(', ');
+        conditions.push(`agency IN (${escapedAgencies})`);
     }
 
     const whereClause = conditions.length > 0

@@ -5,6 +5,7 @@ import type { Express } from 'express';
 
 import jobsRouter from './routes/jobs.js';
 import categoriesRouter from './routes/categories.js';
+import agencyRouter from './routes/agencies.js';
 
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.static('public'));
 
 app.use('/jobs', jobsRouter);
 app.use('/categories', categoriesRouter)
+app.use('/agencies', agencyRouter);
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`)

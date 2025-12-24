@@ -17,6 +17,7 @@ export interface JobsQueryProps {
   pageNumber: number
   pageSize: number
   searchQuery?: SearchQuery
+  agencies?: string[]
 }
 
 interface JobsResponse {
@@ -24,8 +25,8 @@ interface JobsResponse {
   totalCount: number
 }
 
-export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = {}}:JobsQueryProps): JobsQuery => {
-  const queryKey = ['jobs', pageNumber, pageSize, searchQuery];
+export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = {}, agencies = []}:JobsQueryProps): JobsQuery => {
+  const queryKey = ['jobs', pageNumber, pageSize, searchQuery, agencies];
   const queryFn = async () => {
     const params = new URLSearchParams({
       pageNumber: pageNumber.toString(),
@@ -39,6 +40,13 @@ export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = {}}:J
       if (searchQuery.keyWords) {
         params.append('keyWords', searchQuery.keyWords)
       }
+    }
+
+    // Add agencies to query params
+    if (agencies && agencies.length > 0) {
+      agencies.forEach(agency => {
+        params.append('agencies', agency);
+      });
     }
 
     const res = await fetch(`jobs?${params.toString()}`);
