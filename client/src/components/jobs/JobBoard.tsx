@@ -74,7 +74,7 @@ export const JobBoard = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-slate-50/50">
-            <div ref={headerRef} className="max-w-7xl mx-auto px-6 pt-8 pb-12 lg:pt-12 lg:pb-16">
+            <div ref={headerRef} className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-12 lg:pt-12 lg:pb-16">
                 {/* Dataset Banner */}
                 <DatasetBanner count={totalCount} />
 
@@ -163,13 +163,13 @@ export const JobBoard = () => {
                                         setIsSheetOpen(true);
                                     }
                                 }}
-                                className="group bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 transition-all duration-300 cursor-pointer"
+                                className="group bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 transition-all duration-300 cursor-pointer"
                             >
                                 <div className="space-y-5">
                                     {/* Header: Title and Job ID */}
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex-1">
-                                            <h3 className="text-xl font-semibold text-neutral-900 google-sans-flex leading-tight group-hover:text-blue-900 transition-colors mb-2">
+                                    <div className="flex flex-wrap items-start gap-3 sm:gap-4">
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 google-sans-flex leading-tight group-hover:text-blue-900 transition-colors mb-2">
                                                 {job.business_title}
                                             </h3>
                                             {job.civil_service_title && (
@@ -178,8 +178,8 @@ export const JobBoard = () => {
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 border border-blue-200 rounded-full flex-shrink-0">
-                                            <span className="text-xs font-medium text-blue-800 google-sans-flex">
+                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 border border-blue-200 rounded-full">
+                                            <span className="text-xs font-medium text-blue-800 google-sans-flex whitespace-nowrap">
                                                 ID: {job.job_id}
                                             </span>
                                         </div>
@@ -233,18 +233,18 @@ export const JobBoard = () => {
                                     </div>
 
                                     {/* Salary Section */}
-                                    <div className="bg-white/70 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-4">
+                                    <div className="bg-white/70 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-3 sm:p-4">
                                         <div className="flex items-center gap-2 mb-2">
                                             <DollarSign className="w-4 h-4 text-neutral-500" />
                                             <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider">Salary Range</p>
                                         </div>
-                                        <p className="text-lg text-neutral-900 google-sans-flex font-bold">
+                                        <p className="text-base sm:text-lg text-neutral-900 google-sans-flex font-bold break-words">
                                             {formatSalary(job.salary_range_from, job.salary_range_to, job.salary_frequency)}
                                         </p>
                                     </div>
 
                                     {/* Footer: Job Category Badge and Apply Button */}
-                                    <div className="flex items-center justify-between pt-4 border-t border-blue-200/30">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pt-4 border-t border-blue-200/30">
                                         {/* Job Category Badge */}
                                         {job.job_category ? (
                                             <div className="flex items-center gap-2">
@@ -254,14 +254,14 @@ export const JobBoard = () => {
                                                 </span>
                                             </div>
                                         ) : (
-                                            <div></div>
+                                            <div className="hidden sm:block"></div>
                                         )}
 
                                         {/* Apply Button */}
                                         <a
                                             onClick={(e) => { e.stopPropagation() }}
                                             href={`https://cityjobs.nyc.gov/jobs?q=${job.job_id}&options=&page=1`}
-                                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold google-sans-flex shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                            className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold google-sans-flex shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                         >
                                             Apply Now
                                             <ArrowRight className="w-4 h-4" />
@@ -275,18 +275,18 @@ export const JobBoard = () => {
 
                 {/* Pagination */}
                 {!isLoading && jobs.length > 0 && (
-                    <div className="flex items-center justify-center gap-4">
+                    <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
                         <button
                             onClick={() => setPageNumber((prev) => Math.max(1, prev - 1))}
                             disabled={pageNumber === 1}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-neutral-200 rounded-lg text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all google-sans-flex font-medium"
+                            className="flex items-center gap-2 px-3 sm:px-5 py-2.5 bg-white border border-neutral-200 rounded-lg text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all google-sans-flex font-medium"
                         >
                             <ChevronLeft className="w-4 h-4" />
-                            Previous
+                            <span className="hidden xs:inline">Previous</span>
                         </button>
 
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm text-neutral-600 google-sans-flex">
+                        <div className="flex items-center gap-2 px-2">
+                            <span className="text-xs sm:text-sm text-neutral-600 google-sans-flex whitespace-nowrap">
                                 Page <span className="font-semibold text-neutral-900">{pageNumber}</span> of{' '}
                                 <span className="font-semibold text-neutral-900">{totalPages}</span>
                             </span>
@@ -295,9 +295,9 @@ export const JobBoard = () => {
                         <button
                             onClick={() => setPageNumber((prev) => Math.min(totalPages, prev + 1))}
                             disabled={pageNumber === totalPages}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-neutral-200 rounded-lg text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all google-sans-flex font-medium"
+                            className="flex items-center gap-2 px-3 sm:px-5 py-2.5 bg-white border border-neutral-200 rounded-lg text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all google-sans-flex font-medium"
                         >
-                            Next
+                            <span className="hidden xs:inline">Next</span>
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
