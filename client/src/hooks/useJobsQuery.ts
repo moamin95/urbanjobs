@@ -25,6 +25,7 @@ interface JobsResponse {
   totalCount: number
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = {}, agencies = []}:JobsQueryProps): JobsQuery => {
   const queryKey = ['jobs', pageNumber, pageSize, searchQuery, agencies];
   const queryFn = async () => {
@@ -49,7 +50,7 @@ export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = {}, a
       });
     }
 
-    const res = await fetch(`jobs?${params.toString()}`);
+    const res = await fetch(`${API_URL}/jobs?${params.toString()}`);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
