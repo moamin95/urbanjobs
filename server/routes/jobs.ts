@@ -10,11 +10,22 @@ router.get('/', async (req: Request, res: Response) => {
         return res.status(500).json({ error: 'API_TOKEN not configured' });
     }
 
-    const {pageNumber = '1', pageSize = '50', search = '' } = req.query;
+    const {pageNumber = '1', pageSize = '12', job = "", keyWords = "" } = req.query;
 
-    const whereClause = search 
-    ? `WHERE business_title LIKE '${search}%'` 
-    : '';
+    const conditions = [];
+    if (job) {
+        const escapedJob = String(job).replace(/'/g, "''");
+        conditions.push(`business_title LIKE '%${escapedJob}%'`);
+    }
+    if (keyWords) {
+        const escapedKeyWords = String(keyWords).replace(/'/g, "''");
+        conditions.push(`job_category LIKE '%${escapedKeyWords}%'`);
+    }
+
+    const whereClause = conditions.length > 0
+        ? `WHERE ${conditions.join(' AND ')}`
+        : '';
+
 
     try {
         // Fetch jobs

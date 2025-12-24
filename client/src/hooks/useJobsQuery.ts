@@ -11,10 +11,12 @@ export interface JobsQuery {
   isFetching: boolean
 }
 
+export type SearchQuery = Record<string, string>
+
 export interface JobsQueryProps {
   pageNumber: number
   pageSize: number
-  searchQuery?: string
+  searchQuery?: SearchQuery
 }
 
 interface JobsResponse {
@@ -22,8 +24,7 @@ interface JobsResponse {
   totalCount: number
 }
 
-export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = ''}:JobsQueryProps): JobsQuery => {
-  console.log(searchQuery, 'searchQuery')
+export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = {}}:JobsQueryProps): JobsQuery => {
   const queryKey = ['jobs', pageNumber, pageSize, searchQuery];
   const queryFn = async () => {
     const params = new URLSearchParams({
@@ -32,10 +33,15 @@ export const useJobsQuery = ({pageNumber = 1, pageSize = 50, searchQuery = ''}:J
     });
 
     if (searchQuery) {
-      params.append('search', searchQuery);
+      if (searchQuery.job) {
+        params.append('job', searchQuery.job)
+      }
+      if (searchQuery.keyWords) {
+        params.append('keyWords', searchQuery.keyWords)
+      }
     }
 
-    const res = await fetch(`/jobs?${params.toString()}`);
+    const res = await fetch(`jobs?${params.toString()}`);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }

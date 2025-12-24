@@ -118,9 +118,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
+  .google-sans-flex {
+    font-family: "Google Sans Flex", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+  }
+
+  .playfair-display {
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+  }
+  
 
   /* Fixed row heights for table */
   table tbody tr {
@@ -135,7 +149,7 @@
 
   /* Modern table styling */
   table thead th {
-    background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+    background: white;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.75rem;

@@ -19,7 +19,15 @@ router.get('/', async (req: Request, res: Response) => {
 
         const data = await fetchRes.json();
 
-        res.json(data);
+        const parsedCategories = new Set<string>();
+
+        data.forEach((category: any) => {
+            if (category.job_category) {
+                parsedCategories.add(category.job_category);
+            }
+        });
+
+        res.json(Array.from(parsedCategories));
     } catch (err) {
         res.status(500).send({ status: 500, message: "Failed to fetch categories" });
 
