@@ -14,17 +14,17 @@ export default defineConfig({
   server: {
     proxy: {
       '/jobs': {
-        target: 'https://urbanjobs.onrender.com',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       },
       '/categories': {
-        target: 'https://urbanjobs.onrender.com',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       },
       '/agencies': {
-        target: 'https://urbanjobs.onrender.com',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       }
