@@ -1,18 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Search, Filter, MapPin, Briefcase, Clock, ChevronLeft, ChevronRight, DollarSign, Calendar, Building2, Users, Tag, X, ArrowRight } from 'lucide-react';
+import { Search, Filter, MapPin, Briefcase, Clock, ChevronLeft, ChevronRight, DollarSign, Users, Tag, X, ArrowRight } from 'lucide-react';
 import type { Job } from '../../../../shared/types/job';
 import { useJobsQuery } from '@/hooks/useJobsQuery';
 import { useDebounce } from '@/hooks/useDebounce';
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-} from "@/components/ui/sheet";
 import { DatasetBanner } from './DatasetBanner';
 import { useAgencies } from '@/hooks/useAgencies';
 import { MultiSelect } from '@/components/ui/MultiSelect';
+import { JobDetailsSheet } from './JobDetailsSheet';
 
 export const JobBoard = () => {
 
@@ -310,186 +304,12 @@ export const JobBoard = () => {
                 )}
 
                 {/* Job Details Sheet */}
-                <Sheet open={isSheetOpen} onOpenChange={(open) => {
-                    setIsSheetOpen(open);
-                    if (!open && lastFocusedElementRef.current) {
-                        // Restore focus after a brief delay to ensure the sheet is fully closed
-                        setTimeout(() => {
-                            lastFocusedElementRef.current?.focus();
-                        }, 100);
-                    }
-                }}>
-                    <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
-                        {selectedJob && (
-                            <>
-                                <SheetHeader className="space-y-4 pb-6 border-b border-neutral-200">
-                                    <SheetTitle className="text-2xl lg:text-3xl font-light text-neutral-900 playfair-display tracking-tight pr-8">
-                                        {selectedJob.business_title}
-                                    </SheetTitle>
-                                    <SheetDescription className="text-base text-neutral-600 google-sans-flex">
-                                        {selectedJob.agency}
-                                    </SheetDescription>
-                                </SheetHeader>
-
-                                <div className="space-y-8 py-6">
-                                    {/* Key Details */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {/* Salary */}
-                                        <div className="flex items-start gap-3 p-4 bg-neutral-50 rounded-xl">
-                                            <DollarSign className="w-5 h-5 text-neutral-600 mt-0.5 flex-shrink-0" />
-                                            <div>
-                                                <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider mb-1">Salary Range</p>
-                                                <p className="text-sm text-neutral-900 google-sans-flex font-semibold">
-                                                    {formatSalary(selectedJob.salary_range_from, selectedJob.salary_range_to, selectedJob.salary_frequency)}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Location */}
-                                        {selectedJob.work_location && (
-                                            <div className="flex items-start gap-3 p-4 bg-neutral-50 rounded-xl">
-                                                <MapPin className="w-5 h-5 text-neutral-600 mt-0.5 flex-shrink-0" />
-                                                <div>
-                                                    <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider mb-1">Location</p>
-                                                    <p className="text-sm text-neutral-900 google-sans-flex">{selectedJob.work_location}</p>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Job Type */}
-                                        <div className="flex items-start gap-3 p-4 bg-neutral-50 rounded-xl">
-                                            <Briefcase className="w-5 h-5 text-neutral-600 mt-0.5 flex-shrink-0" />
-                                            <div>
-                                                <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider mb-1">Employment Type</p>
-                                                <p className="text-sm text-neutral-900 google-sans-flex">{selectedJob.full_time_part_time_indicator || 'Not specified'}</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Posting Date */}
-                                        <div className="flex items-start gap-3 p-4 bg-neutral-50 rounded-xl">
-                                            <Calendar className="w-5 h-5 text-neutral-600 mt-0.5 flex-shrink-0" />
-                                            <div>
-                                                <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider mb-1">Posted</p>
-                                                <p className="text-sm text-neutral-900 google-sans-flex">{formatDate(selectedJob.posting_date)}</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Career Level */}
-                                        {selectedJob.career_level && (
-                                            <div className="flex items-start gap-3 p-4 bg-neutral-50 rounded-xl">
-                                                <Users className="w-5 h-5 text-neutral-600 mt-0.5 flex-shrink-0" />
-                                                <div>
-                                                    <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider mb-1">Career Level</p>
-                                                    <p className="text-sm text-neutral-900 google-sans-flex">{selectedJob.career_level}</p>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Number of Positions */}
-                                        {selectedJob.number_of_positions && (
-                                            <div className="flex items-start gap-3 p-4 bg-neutral-50 rounded-xl">
-                                                <Building2 className="w-5 h-5 text-neutral-600 mt-0.5 flex-shrink-0" />
-                                                <div>
-                                                    <p className="text-xs text-neutral-500 google-sans-flex font-medium uppercase tracking-wider mb-1">Positions Available</p>
-                                                    <p className="text-sm text-neutral-900 google-sans-flex">{selectedJob.number_of_positions}</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Job Category */}
-                                    {selectedJob.job_category && (
-                                        <div className="space-y-2">
-                                            <h3 className="text-sm font-semibold text-neutral-900 google-sans-flex uppercase tracking-wider">Category</h3>
-                                            <p className="text-neutral-700 google-sans-flex bg-neutral-50 px-4 py-2 rounded-lg inline-block">
-                                                {selectedJob.job_category}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {/* Job Description */}
-                                    {selectedJob.job_description && (
-                                        <div className="space-y-3">
-                                            <h3 className="text-sm font-semibold text-neutral-900 google-sans-flex uppercase tracking-wider">Job Description</h3>
-                                            <div className="prose prose-sm max-w-none text-neutral-700 google-sans-flex whitespace-pre-wrap leading-relaxed">
-                                                {selectedJob.job_description}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Additional Information */}
-                                    {selectedJob.additional_information && (
-                                        <div className="space-y-3">
-                                            <h3 className="text-sm font-semibold text-neutral-900 google-sans-flex uppercase tracking-wider">Additional Information</h3>
-                                            <div className="prose prose-sm max-w-none text-neutral-700 google-sans-flex whitespace-pre-wrap leading-relaxed">
-                                                {selectedJob.additional_information}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* How to Apply */}
-                                    {selectedJob.to_apply && (
-                                        <div className="space-y-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                                            <h3 className="text-sm font-semibold text-blue-900 google-sans-flex uppercase tracking-wider">How to Apply</h3>
-                                            <div className="prose prose-sm max-w-none text-blue-800 google-sans-flex whitespace-pre-wrap leading-relaxed">
-                                                {selectedJob.to_apply}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Additional Details */}
-                                    <div className="space-y-3 border-t border-neutral-200 pt-6">
-                                        <h3 className="text-sm font-semibold text-neutral-900 google-sans-flex uppercase tracking-wider">Additional Details</h3>
-                                        <div className="grid grid-cols-1 gap-3 text-sm">
-                                            {selectedJob.civil_service_title && (
-                                                <div className="flex justify-between py-2 border-b border-neutral-100">
-                                                    <span className="text-neutral-500 google-sans-flex">Civil Service Title</span>
-                                                    <span className="text-neutral-900 google-sans-flex font-medium text-right">{selectedJob.civil_service_title}</span>
-                                                </div>
-                                            )}
-                                            {selectedJob.title_classification && (
-                                                <div className="flex justify-between py-2 border-b border-neutral-100">
-                                                    <span className="text-neutral-500 google-sans-flex">Title Classification</span>
-                                                    <span className="text-neutral-900 google-sans-flex font-medium text-right">{selectedJob.title_classification}</span>
-                                                </div>
-                                            )}
-                                            {selectedJob.level && (
-                                                <div className="flex justify-between py-2 border-b border-neutral-100">
-                                                    <span className="text-neutral-500 google-sans-flex">Level</span>
-                                                    <span className="text-neutral-900 google-sans-flex font-medium text-right">{selectedJob.level}</span>
-                                                </div>
-                                            )}
-                                            {selectedJob.division_work_unit && (
-                                                <div className="flex justify-between py-2 border-b border-neutral-100">
-                                                    <span className="text-neutral-500 google-sans-flex">Division/Work Unit</span>
-                                                    <span className="text-neutral-900 google-sans-flex font-medium text-right">{selectedJob.division_work_unit}</span>
-                                                </div>
-                                            )}
-                                            {selectedJob.posting_type && (
-                                                <div className="flex justify-between py-2 border-b border-neutral-100">
-                                                    <span className="text-neutral-500 google-sans-flex">Posting Type</span>
-                                                    <span className="text-neutral-900 google-sans-flex font-medium text-right">{selectedJob.posting_type}</span>
-                                                </div>
-                                            )}
-                                            {selectedJob.residency_requirement && (
-                                                <div className="flex justify-between py-2 border-b border-neutral-100">
-                                                    <span className="text-neutral-500 google-sans-flex">Residency Requirement</span>
-                                                    <span className="text-neutral-900 google-sans-flex font-medium text-right">{selectedJob.residency_requirement}</span>
-                                                </div>
-                                            )}
-                                            {selectedJob.post_until && (
-                                                <div className="flex justify-between py-2 border-b border-neutral-100">
-                                                    <span className="text-neutral-500 google-sans-flex">Post Until</span>
-                                                    <span className="text-neutral-900 google-sans-flex font-medium text-right">{formatDate(selectedJob.post_until)}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </SheetContent>
-                </Sheet>
+                <JobDetailsSheet
+                    job={selectedJob}
+                    isOpen={isSheetOpen}
+                    onOpenChange={setIsSheetOpen}
+                    lastFocusedElementRef={lastFocusedElementRef}
+                />
             </div>
         </div>
     );

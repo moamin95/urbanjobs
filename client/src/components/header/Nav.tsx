@@ -15,7 +15,7 @@ export const Nav = () => {
                     {/* Navigation Links */}
                     <div className="flex items-center gap-4">
                         <a
-                            href="https://github.com"
+                            href="https://github.com/moamin95/urbanjobs"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-4 py-2 text-white/90 hover:text-white rounded-lg hover:bg-white/10 transition-all google-sans-flex font-medium text-sm"
