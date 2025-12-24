@@ -1,4 +1,3 @@
-import React from 'react';
 import { Database, Calendar, Tag, User, Globe, Info } from 'lucide-react';
 
 export interface DatasetBannerProps {

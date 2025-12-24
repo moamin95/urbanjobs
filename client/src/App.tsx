@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { DatasetBanner } from './components/jobs/DatasetBanner';
 import {JobBoard} from './components/jobs/JobBoard'
 import { Nav } from './components/header/Nav'
 
