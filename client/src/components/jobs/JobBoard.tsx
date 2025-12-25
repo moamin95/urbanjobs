@@ -74,7 +74,7 @@ export const JobBoard = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-slate-50/50">
-            <div ref={headerRef} className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-12 lg:pt-12 lg:pb-16">
+            <div ref={headerRef} className="max-w-7xl mx-auto px-2 sm:px-6 pt-8 pb-12 lg:pt-12 lg:pb-16">
                 {/* Dataset Banner */}
                 <DatasetBanner count={totalCount} />
 
