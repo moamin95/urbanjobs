@@ -1,73 +1,129 @@
-# React + TypeScript + Vite
+# Urban Jobs NYC
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack job board application for browsing New York City government job postings, powered by NYC Open Data.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Frontend
+- **React** 19.2.0 - UI library
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **TanStack Query** (React Query) v5.90.12 - Server state management and caching
+- **TailwindCSS** 4.1.18 - Utility-first CSS framework
+- **Radix UI** - Accessible component primitives
+- **Lucide React** - Icon library
 
-## React Compiler
+### Backend
+- **Express.js** v5.2.1 - Web framework
+- **TypeScript** - Type safety
+- **CORS** - Cross-origin resource sharing
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Data Source
+- **NYC Open Data SODA API** - Socrata Open Data API
+- **SOQL Queries** - SQL-like query language for filtering and retrieving data
 
-## Expanding the ESLint configuration
+## TanStack Query Caching Strategy
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The application implements an efficient caching strategy using TanStack Query:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Cache Configuration
+```typescript
+{
+  staleTime: 1000 * 60 * 60,      // 1 hour - data considered fresh for 1 hour
+  gcTime: 1000 * 60 * 60 * 2,     // 2 hours - cache retained for 2 hours
+  placeholderData: (previousData) => previousData  // Show previous data while fetching
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Query Key Strategy
+Queries are cached based on:
+- `pageNumber` - Current page
+- `pageSize` - Number of items per page
+- `searchQuery` - Job title and keyword filters
+- `agencies` - Selected agency filters
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+This ensures that identical queries return cached data instantly, while different filter combinations fetch fresh data.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Benefits
+- Reduced API calls and backend load
+- Instant navigation when returning to previously viewed pages
+- Smooth UX with placeholder data during refetches
+- Automatic cache invalidation after 1 hour
+
+## Express.js Backend
+
+The backend server provides a REST API that interfaces with NYC Open Data:
+
+### Architecture
+- RESTful endpoints for jobs, agencies, and categories
+- Proxy layer to NYC Open Data SODA API
+- Query building with SOQL syntax
+- Error handling and validation
+
+### API Endpoints
+- `GET /jobs` - Retrieve paginated job listings with filters
+- `GET /agencies` - Get list of NYC agencies
+- `GET /categories` - Get job categories
+
+### Environment Variables
+```bash
+API_TOKEN=your_nyc_open_data_token
+```
+
+## NYC Open Data SODA API
+
+The application queries the [NYC Jobs dataset](https://data.cityofnewyork.us/City-Government/NYC-Jobs/kpav-sd4t) using SOQL (Socrata Query Language):
+
+### SOQL Query Examples
+
+**Fetch jobs with filters:**
+```sql
+SELECT *
+WHERE business_title LIKE '%Engineer%'
+  AND agency IN ('DEPT OF PARKS & RECREATION', 'FIRE DEPARTMENT')
+ORDER BY posting_date DESC
+```
+
+**Get total count:**
+```sql
+SELECT COUNT(*)
+WHERE business_title LIKE '%Engineer%'
+```
+
+### Features
+- SQL-like syntax for familiar querying
+- Support for `WHERE`, `LIKE`, `IN`, `ORDER BY` clauses
+- Pagination with page number and size
+- Full-text search capabilities
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Project Structure
+
+```
+├── client/               # Frontend React application
+│   ├── src/
+│   │   ├── components/  # React components
+│   │   ├── hooks/       # Custom hooks (TanStack Query)
+│   │   ├── lib/         # Utilities
+│   │   └── apis.ts      # API client configuration
+├── server/              # Express.js backend
+│   ├── routes/          # API route handlers
+│   ├── server.ts        # Express server setup
+│   └── type.ts          # TypeScript types
+└── shared/              # Shared types between client and server
 ```
