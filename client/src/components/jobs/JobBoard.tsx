@@ -6,7 +6,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { DatasetBanner } from './DatasetBanner';
 import { useAgencies } from '@/hooks/useAgencies';
 import { MultiSelect } from '@/components/ui/MultiSelect';
-import { JobDetailsSheet } from './JobDetailsSheet';
+// import { JobDetailsSheet } from './JobDetailsSheet';
 
 export const JobBoard = () => {
 
@@ -16,9 +16,9 @@ export const JobBoard = () => {
     const [jobSearch, setJobSearch] = useState('');
     const [keyWordsSearch, setKeyWordsSearch] = useState('');
     const [selectedAgencies, setSelectedAgencies] = useState<string[]>([]);
-    const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
-    const lastFocusedElementRef = React.useRef<HTMLDivElement | null>(null);
+    // const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+    // const [isSheetOpen, setIsSheetOpen] = useState(false);
+    // const lastFocusedElementRef = React.useRef<HTMLDivElement | null>(null);
     const pageSize = 12;
 
     const debouncedJobSearch = useDebounce({ delay: 500, query: jobSearch });
@@ -290,12 +290,12 @@ export const JobBoard = () => {
                 )}
 
                 {/* Job Details Sheet */}
-                <JobDetailsSheet
+                {/* <JobDetailsSheet
                     job={selectedJob}
                     isOpen={isSheetOpen}
                     onOpenChange={setIsSheetOpen}
                     lastFocusedElementRef={lastFocusedElementRef}
-                />
+                /> */}
             </div>
         </div>
     );
