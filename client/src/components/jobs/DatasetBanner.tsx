@@ -6,7 +6,7 @@ export interface DatasetBannerProps {
 
 export const DatasetBanner = ({count}: DatasetBannerProps) => {
     return (
-        <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 rounded-2xl p-6 mb-10 shadow-sm">
+        <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 rounded-2xl p-4 md:p-6 mb-10 shadow-sm">
             <div className="space-y-5">
                 {/* Header */}
                 <div className="flex items-start justify-between">
@@ -96,13 +96,13 @@ export const DatasetBanner = ({count}: DatasetBannerProps) => {
                         <span className="font-medium text-neutral-500">Created:</span>
                         <span>April 18, 2013</span>
                     </div>
-                    <div className="flex items-start gap-2 text-xs text-neutral-600 google-sans-flex">
-                        <span className="font-medium text-neutral-500">Attribution:</span>
-                        <span>Department of Citywide Administrative Services (DCAS)</span>
-                    </div>
                     <div className="flex items-center gap-2 text-xs text-neutral-600 google-sans-flex">
                         <span className="font-medium text-neutral-500">Endpoint:</span>
                         <span className="font-mono">v3.0</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-xs text-neutral-600 google-sans-flex">
+                        <span className="font-medium text-neutral-500">Attribution:</span>
+                        <span>Department of Citywide Administrative Services (DCAS)</span>
                     </div>
                 </div>
             </div>

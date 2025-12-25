@@ -57,9 +57,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                 {/* Placeholder with count */}
                 <div className="flex-1">
                     {selected.length === 0 ? (
-                        <span className="text-neutral-400 text-sm">{placeholder}</span>
+                        <span className="text-neutral-400">{placeholder}</span>
                     ) : (
-                        <span className="text-neutral-900 text-sm">
+                        <span className="text-neutral-900">
                             {selected.length} {selected.length === 1 ? 'agency' : 'agencies'} selected
                         </span>
                     )}
