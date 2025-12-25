@@ -138,7 +138,9 @@ export const JobBoard = () => {
                 {/* Job List */}
                 {isLoading ? (
                     <div className="flex items-center justify-center py-20">
-                        <div className="text-neutral-400 google-sans-flex">Loading positions...</div>
+                        <div className="flex flex-col text-neutral-400 google-sans-flex"><p>Loading positions...</p>
+                        <p>The backend service spins down with inactivity. Please allow 30-45 seconds of loading.</p>
+                        </div>
                     </div>
                 ) : jobs.length === 0 ? (
                     <div className="flex items-center justify-center py-20">
