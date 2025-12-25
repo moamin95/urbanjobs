@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import  { useEffect, useState, useRef } from 'react';
 import { Search, Filter, MapPin, Briefcase, Clock, ChevronLeft, ChevronRight, DollarSign, Users, Tag, X, ArrowRight } from 'lucide-react';
-import type { Job } from '../../../../shared/types/job';
+// import type { Job } from '../../../../shared/types/job';
 import { useJobsQuery } from '@/hooks/useJobsQuery';
 import { useDebounce } from '@/hooks/useDebounce';
 import { DatasetBanner } from './DatasetBanner';
