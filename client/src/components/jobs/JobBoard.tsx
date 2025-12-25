@@ -149,21 +149,7 @@ export const JobBoard = () => {
                         {jobs.slice(0, pageSize).map((job) => (
                             <div
                                 key={job[":id"]}
-                                tabIndex={0}
-                                onClick={(e) => {
-                                    lastFocusedElementRef.current = e.currentTarget;
-                                    setSelectedJob(job);
-                                    setIsSheetOpen(true);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault();
-                                        lastFocusedElementRef.current = e.currentTarget;
-                                        setSelectedJob(job);
-                                        setIsSheetOpen(true);
-                                    }
-                                }}
-                                className="group bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 transition-all duration-300 cursor-pointer"
+                                className="group bg-gradient-to-br from-blue-50 via-white to-indigo-50/30 border border-blue-200/50 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-blue-300/60 transition-all duration-300"
                             >
                                 <div className="space-y-5">
                                     {/* Header: Title and Job ID */}
